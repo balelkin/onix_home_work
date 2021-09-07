@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SignUp</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body> 
+    <nav>
+    <div class="nav-wrapper">
+      <a href="http://localhost:3000" class="brand-logo right">Test work</a>
+      <ul id="nav-mobile" class="center hide-on-med-and-down">
+        <li><a href="http://localhost:3000/login"> Sign In </a></li>
+        <li><a href="http://localhost:3000/register"> Sign Up </a></li>
+        <li><a href="http://localhost:3000/auth/google">Google Auth</a></li>
+      </ul>
+    </div>
+  </nav>
+  <form  method="POST" action="/auth/sign-up" style="padding: 20%; text-align: center; padding-top: 10%;">
+    <h2 style="color: brown;">Sign Up</h2>
+        
+     <div class="row">
+        <div class="input-field col s12">
+          <input  type="text" class="validate" name="name">
+          <span class="helper-text" data-error="wrong" data-success="right">Input name</span>
+        </div>
+      </div>
+        <div class="row">
+        <div class="input-field col s12">
+          <input id="email" type="email" class="validate" name="email">
+          <span class="helper-text" data-error="wrong" data-success="right">Input email</span>
+        </div>
+      </div>
+    <div class="row">
+        <div class="input-field col s12">
+          <input id="password" type="password" class="validate" name="password">
+          <span class="helper-text" data-error="wrong" data-success="right">Input password</span>
+        </div>
+      </div>
+      <div class="file-field input-field">
+      <div class="btn">
+        <span>Avatar</span>
+        <input type="file">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text" name="avatar" value="https://picsum.photos/200/300" >
+      </div>
+    </div>
+   <p><input type="submit" value="Sign In" class="waves-effect waves-light btn"></p>
+  </form>
+ 
+</body>
+</html>
