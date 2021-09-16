@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
+import { Model, Schema, Types } from 'mongoose';
 
 import { CreateMessageDto } from './dto/create-message.dto';
 import { IMessage } from './interfaces/message.interface';
@@ -17,13 +17,19 @@ export class MessageService {
   }
 
   async getAllMessagesByRoom(roomId: string): Promise<IMessage[]> {
-    return this.messageRepository
+      return this.messageRepository
       .find({ roomId })
-      .limit(20)
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .populate('ownerId')
       .populate('roomId')
       .lean();
-  };
+  }
   
+  async getById(id: string): Promise<IMessage> {
+    return this.messageRepository
+      .findById(Types.ObjectId(id))
+      .populate('ownerId')
+      .populate('roomId')
+      .lean();
+  }
 }

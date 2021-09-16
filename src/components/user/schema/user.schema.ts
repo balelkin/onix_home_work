@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose'; 
 import { Room } from 'src/components/room/schemas/room.schema';
+import { statusEnum } from '../enums/status.enum';
 
 export type UserDocument = User & Document;
 
@@ -27,7 +28,12 @@ export class User {
   
   @Prop({required: false})
   googleToken: string;
+  
+  @Prop({required: false})
+  googleId: string;
 
+  @Prop({required: true, enum: Object.values(statusEnum), default: statusEnum.pending})
+  status: string; 
 
 }
 

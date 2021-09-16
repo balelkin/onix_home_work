@@ -12,7 +12,6 @@ import { Socket, Server } from 'socket.io';
 import { AuthService } from "src/components/auth/auth.service";
 import { MessageService } from "src/components/message/message.service";
 import { RoomService } from "src/components/room/room.service";
-import Cookies from 'js-cookie';
 import { UserService } from '../user/user.service';
 
 
@@ -61,32 +60,28 @@ constructor(
   async setUserRoom(client: Socket, data: { roomId: string, accessToken: string }) {
     const tokenPayload = await this.authService.getTokenPayload(data.accessToken);
     await this.roomService.joinUserToRoom(new ObjectId(data.roomId), tokenPayload.uId);
-    client.join(data.roomId);
-
-    this.wss.to(data.roomId).emit('addUser', { user: tokenPayload.uEmail, userId: tokenPayload.uId });
+    client.join(data.roomId); 
+    const messages = await this.messageService.getAllMessagesByRoom(data.roomId)
+    this.wss.to(data.roomId).emit('addUser', { user: tokenPayload.uEmail, userId: tokenPayload.uId, text: messages});
   }
 
   @SubscribeMessage('clientToServer')
-  async handleMessage(client: Socket, data: { text: string; accessToken: string; roomId: string, userId: string}) {
+  async handleMessage(client: Socket, data: { text: string; accessToken: string; roomId: string; userId: string; name: string; avatar: string; email: string;}, ) {
     const tokenPayload = await this.authService.getTokenPayload(data.accessToken)
-    const usId = this.userServise.getUserByEmail(tokenPayload.email)
-    const user = this.userServise.getById((await usId)._id)
-      console.log((await user).avatar, (await user).name, (await user).email, data.text );
-
+    const user = this.userServise.getUserByEmail(tokenPayload.email)
+      
+          
     await this.messageService.create({
       text: data.text,
-      userId: tokenPayload.uId,
       roomId: new ObjectId(data.roomId),
-      ownerId: (await usId)._id
+      ownerId: (await user)._id 
 
     });
-
     this.wss.to(data.roomId).emit('serverToClient', {
+     
       text: data.text,
-      userName: (await user).name,
-      userEmail: (await user).email,
-      userAvatar: (await user).avatar,
-      user: tokenPayload.uEmail,
+      name: data.name
+         
     });
   }
 }

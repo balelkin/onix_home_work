@@ -11,7 +11,8 @@ import { RoomService } from '../room/room.service';
 
 @Injectable()
 export class UserService {
-  constructor(
+  private readonly saltRound = 10;
+  constructor( 
     @InjectModel('User')
     private userRepository: Model<UserEntity>, 
     private readonly roomService: RoomService)
@@ -31,7 +32,7 @@ export class UserService {
       const userFromDB = await this.getUserByEmail(user.email);
       if (!userFromDB){
         var createdUser = new this.userRepository(
-          _.assignIn(user, {googleToken: user.accessToken}),
+          _.assignIn(user, {googleToken: user.accessToken}, {token: user.token}),
       );
       } else {
         this.userRepository.findOneAndUpdate(user.email, {googleToken: user.accessToken})
@@ -101,7 +102,10 @@ export class UserService {
       .populate('roomId')
       .lean();
   }
-
+  async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(this.saltRound);
+    return await bcrypt.hash(password, salt);
+  }
   async removeAllUsersFromRoom(roomId: string) {
     return this.userRepository.updateMany(
       { roomId: Types.ObjectId(roomId) },
@@ -109,6 +113,8 @@ export class UserService {
       { new: true },
     );
   }
-
-  
+  async updatePassword(uId: string, password: string): Promise<boolean> {
+    await this.userRepository.updateOne({ _id: uId }, { password });
+    return true;
+  }
 }

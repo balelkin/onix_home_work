@@ -1,11 +1,15 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, Render } from '@nestjs/common';
+import { AuthService } from '../auth/auth.service';
+import { ForgotPasswordDto } from '../auth/dto/forgot-password.dto';
 
 
 @Controller()
 export default class AppController {
   private start: number;
 
-  constructor() {
+  constructor(
+    private readonly authService: AuthService, 
+  ) {
     this.start = Date.now();
   }
   @Get()
@@ -19,7 +23,19 @@ export default class AppController {
   @Get('login')
   @Render('login.hbs')
   getLogin (){}
+  
+ 
+ @Get('/forgotPassword')
+ @Render('forgot-password')
+ @HttpCode(201)
+  async forgotPassword(){} 
 
+  @Get('/changePassword')
+  @Render('changePassword')
+  changePassword() {
+    return { title: 'change Password' };
+  }
+  
   @Get('healthcheck')
   async healthcheck() {
     const now = Date.now();

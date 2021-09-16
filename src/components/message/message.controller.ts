@@ -16,14 +16,7 @@ export class MessageController {
 
   @Post('/create')
   async crete(@Body() createMessageDto: CreateMessageDto, @Cookies('email') email: string) {
-    // const user = await this.userService.getUserByEmail(email)
-    // console.log(user);
-    
-    console.log(createMessageDto);
-    console.log('email: ', email);
-    
-    
-    //return await this.messageService.create(createMessageDto);
+   
   }
 
   @Get('/by-room/:roomId')

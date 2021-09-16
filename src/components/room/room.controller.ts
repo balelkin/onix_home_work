@@ -7,7 +7,7 @@ import { IRoom } from './interfaces/room.interfaces';
 import { UserData } from '../auth/decorators/user.decorator';
 import { IsEmail } from 'class-validator';
 import { MessageService } from '../message/message.service';
-
+import { ObjectId } from 'mongodb';
 
 @Controller('/room')
 export class RoomController {
@@ -19,33 +19,31 @@ export class RoomController {
     }
   
   @Post('/save')
+  @Redirect('/room')
   create(@Body() createRoomDto: CreateRoomDto) {
     return this.roomService.create(createRoomDto);
   }
 
   @Get('/create')
-  @Render('createRoom.hbs')
+  @Render('createRoom')
+  @Redirect('/room')
   createRoom(){}
 
-  // @Render('roomList.hbs')
+  
   @Get('/')
   @Render('rooms.hbs')
   async findAll(@UserData() user)  {
-      
     const rooms = await this.roomService.findAll()
     return  {title: 'chat', rooms};
   }
 
   @Get('/:id/chat')
   @Render('chat.hbs')
-  @Redirect('/message/by-room/:roomId')
-  async getRoomById(@Param('id') id: string, @UserData() user ) {
-    const messages = await this.messageService.getAllMessagesByRoom(id);
-    //const name: string = user.userName 
-    console.log(user);
-    
-    
-    return { messages, user};
+  //@Redirect('/message/by-room/:roomId')
+  async processChatRoom(@Param('id') id: string) {
+      const messages = await this.messageService.getAllMessagesByRoom(id)
+         
+    return { title: 'chat room', messages };
   }
 
   @Patch('/:id')
@@ -62,5 +60,4 @@ export class RoomController {
   getAllRoomsByUser(@Param('ownerId') ownerId: string): Promise<IRoom[]> {
     return this.roomService.getAllRoomsByUser(ownerId);
   }
-
 } 

@@ -7,4 +7,6 @@ readonly password?: string;
 readonly roomId?: Types.ObjectId;
 readonly avatar?: string;
 readonly googleToken?: string;
+readonly token?: string;
+         status?: string;
 }

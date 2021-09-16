@@ -10,13 +10,14 @@
 </head>
 <body>
  <nav>
-    <div class="nav-wrapper">
-      <a href="http://localhost:3000" class="brand-logo right">Test work</a>
-     
+    <div class="nav-wrapper blue">
+     <form method="get" action="/auth/logout">
+         <input  type="submit" value="LogOut" class="btn red brand-logo right" style="margin-top: 15px; margin-right: 5%;">
+     </form>
+          
       <ul id="nav-mobile" class="center hide-on-med-and-down">
         <li><a href="http://localhost:3000/login"> Sign In </a></li>
         <li><a href="http://localhost:3000/register"> Sign Up </a></li>
-        <li><a href="http://localhost:3000/auth/google">Google Auth</a></li>
         <li style="justify-content: center;"><img src="{{user.avatar}}" width="30px" style="margin-top: 15px; border-radius: 10px 50px / 60px;" alt=""></li>
         <li><span style="justify-content: center; margin-left: 10px; margin-bottom: 14px;">{{user.name}}</span></li>
       </ul>
@@ -27,7 +28,7 @@
     <input type="text" placeholder="search" style="width: 200px; margin-top: 60px; margin-left: 20px;">
      </form>
      <form method="GET" action="/room/create">
-         <input  type="submit" value="Create room" class="waves-effect waves-light btn" style="margin-top: 60px; margin-left: 250px;">
+         <input  type="submit" value="Create room" class="btn blue" style="margin-top: 60px; margin-left: 250px;">
      </form>
   </div>
   

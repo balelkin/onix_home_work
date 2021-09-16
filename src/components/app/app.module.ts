@@ -12,6 +12,7 @@ import { UserService } from '../user/user.service';
 import AppController from './app.controller';
 import { ChatGateway } from '../chat/chat.gatewey';
 import { TokenModule } from '../token/token.module';
+import { MailModule } from '../mail/mail.module';
 
 const environment = process.env.NODE_ENV || 'development'
 
@@ -32,7 +33,8 @@ const environment = process.env.NODE_ENV || 'development'
     AuthModule,
     UserModule, 
     RoomModule, 
-    MessageModule, 
+    MessageModule,
+    MailModule, 
     
   ],
   controllers: [AppController],

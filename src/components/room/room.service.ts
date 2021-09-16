@@ -50,10 +50,10 @@ export class RoomService {
     .lean()
   }
   
-  async leaveUserFromRoom(roomId, userId) {
+  async leaveUserFromRoom(roomId, usersId) {
     return this.roomRepository.findByIdAndUpdate(
       { _id: roomId },
-      { $push: { connectedUsers: userId } },
+      { $push: { connectedUsers: usersId } },
     );
   };
 
@@ -63,6 +63,12 @@ export class RoomService {
       { $addToSet: { usersId: Types.ObjectId(userId) } },
       { new: true },
     );
+  }
+  
+  async getUsersByRoomId(roomId) {
+    const users = await this.roomRepository.findById({roomId}).populate('usersId').lean()
+       
+    return users[0].users;
   }
 }
 

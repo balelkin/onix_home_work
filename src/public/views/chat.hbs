@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{user.name}}</title>
+    <title>{{ name }}</title>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
 </head>
 <body>
  <nav>
-    <div class="nav-wrapper">
-      <a href="http://localhost:3000" class="brand-logo right">Test work</a>
+    <div class="nav-wrapper blue">
+    <form method="get" action="/auth/logout">
+         <input  type="submit" value="LogOut" class="btn red brand-logo right" style="margin-top: 15px; margin-right: 5%;">
+     </form>
      
       <ul id="nav-mobile" class="center hide-on-med-and-down">
         <li><a href="http://localhost:3000/login"> Sign In </a></li>
         <li><a href="http://localhost:3000/register"> Sign Up </a></li>
-        <li><a href="http://localhost:3000/auth/google">Google Auth</a></li>
         <li style="justify-content: center;"><img src="{{user.avatar}}" width="30px" style="margin-top: 15px; border-radius: 10px 50px / 60px;" alt=""></li>
         <li><span style="justify-content: center; margin-left: 10px; margin-bottom: 14px;">{{user.name}}</span></li>
       </ul>
@@ -25,9 +26,9 @@
 
  <div id="chatWrapper">
 <div id="chatBox" class="p-2" style="border: thick double #32a1ce; overflow-y: scroll; border-radius: 10px; height: 400px; margin-left:15%;margin-right:15%; margin-top: 50px">
-  {{#each messages}}
-           <div class="msgBox">
-          <strong>{{ userName}}</strong>: {{ text }}
+ {{#each messages}}
+           <div style="border-radius: 20px; background-color: rgba(7, 248, 236, 0.5); margin: 15px; padding: 10px;" class="msgBox">
+          <strong id="">{{ name }}{{ ownerId.name }}</strong>: {{ text }}
         </div>
    {{/each}}
 </div>
@@ -39,12 +40,12 @@
 </div>
 <div class="col-4 p-2 mb-2" style="height: 700px;" id="usersWrapper">
     <div class="container d-flex justify-content-between flex-wrap" id="usersContainer">
-      {{#each user}}
+      {{#each users }}
           <div class="avatar-container" id="{{ user._id }}">
             <div class="avatar-img">
               <img src="{{ user.userAvatar }}" style="border: 1px solid grey;border-radius: 50%">
             </div>
-            <div class="avatar-name d-flex justify-content-center">{{ user.userName }}</div>
+            <div class="avatar-name d-flex justify-content-center">{{ avatarName }}</div>
           </div>
         {{/each}}
     </div>
@@ -59,17 +60,20 @@
   socket.on('serverToClient', function(msg) {
     let chatBox = document.getElementById('chatBox');
     let msgDiv = document.createElement('div');
+    msgDiv.style =  "border-radius: 20px; background-color: rgba(7, 248, 236, 0.5); margin: 15px; padding: 10px;"
     msgDiv.innerText = msg.text;
     let userStrong = document.createElement('strong')
-    userStrong.innerText = msg.user + ': ';
+    userStrong.innerText = msg.name + ': ';
     msgDiv.insertBefore(userStrong, msgDiv.firstChild);
     chatBox.insertBefore(msgDiv, chatBox.firstChild);
   });
 
   socket.on('addUser', (data) => {
+  
     addUser(data);
   })
-
+  
+  
   socket.on('disconnectUser', (userId) => {
     document.getElementById(userId).remove();
   })
@@ -103,7 +107,7 @@
     e.preventDefault();
     let msgText = document.getElementById('msgText').value;
     document.getElementById('msgText').value = '';
-    socket.emit('clientToServer', { text: msgText, accessToken: getAccessToken(), roomId: getChatRoomId()}, );
+    socket.emit('clientToServer', { text: msgText, accessToken: getAccessToken(), roomId: getChatRoomId(), name: getUserName()}, );
   }
   
   
@@ -115,9 +119,14 @@
   function getAccessToken() {
     let separateCookies = document.cookie.split(';');
     let userPart = separateCookies.filter((i) => i.trim().slice(0, 11) === 'accessToken');
+   console.log(userPart)
     return userPart[0].split('=')[1];
   }
-
+function getUserName(){
+   let separateCookies =  document.cookie.trim().split(';');
+   let userPart = separateCookies.find((i) => i.trim().substring(0, 4)==="name");
+    return userPart.split('=')[1];
+  }
 </script>
 </body>
 </html>

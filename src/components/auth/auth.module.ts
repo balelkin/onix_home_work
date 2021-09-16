@@ -10,10 +10,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../user/schema/user.schema';
 import { GoogleStrategy } from './strategies/google.strategies';
 import { JwtStrategy } from './strategies/jwt.strategies';
+import { MailModule } from '../mail/mail.module';
+import { TokenModule } from '../token/token.module';
 
 
 @Module({ 
   imports: [
+    TokenModule,
+    MailModule,
     UserModule, 
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     PassportModule,
