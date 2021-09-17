@@ -12,7 +12,7 @@ export default class AppController {
   ) {
     this.start = Date.now();
   }
-  @Get()
+  @Get('/')
   @Render('index')
   getIndex (){}
 
