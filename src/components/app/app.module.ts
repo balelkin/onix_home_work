@@ -14,33 +14,29 @@ import { ChatGateway } from '../chat/chat.gatewey';
 import { TokenModule } from '../token/token.module';
 import { MailModule } from '../mail/mail.module';
 
-const environment = process.env.NODE_ENV || 'development'
+const environment = process.env.NODE_ENV || 'development';
 
 @Module({
-  imports:
-   [ ConfigModule.forRoot({
-    envFilePath: `.env.${environment}`,
-    isGlobal: true,
-  }),
-    MongooseModule.forRoot( process.env.MONGO_URI, 
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: false
-      }),
-    TokenModule, 
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: `.env.${environment}`,
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }),
+    TokenModule,
     AuthModule,
-    UserModule, 
-    RoomModule, 
+    UserModule,
+    RoomModule,
     MessageModule,
-    MailModule, 
-    
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
-  exports: [AppService]
-
-  
-  })
+  exports: [AppService],
+})
 export class AppModule {}

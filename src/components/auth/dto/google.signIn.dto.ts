@@ -1,7 +1,3 @@
-
-
 export default class GoogleSignInDto {
-    email: string;
-  
-  }
-  
+  email: string;
+}

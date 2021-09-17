@@ -8,11 +8,10 @@ import { MessageModule } from '../message/message.module';
 
 @Module({
   imports: [
-  MongooseModule.forFeature([{ name: 'Room', schema: RoomSchema }]),
-  forwardRef(() =>UserModule ),
-  forwardRef(() =>MessageModule )
- 
-],
+    MongooseModule.forFeature([{ name: 'Room', schema: RoomSchema }]),
+    forwardRef(() => UserModule),
+    forwardRef(() => MessageModule),
+  ],
   controllers: [RoomController],
   providers: [RoomService],
   exports: [RoomService],

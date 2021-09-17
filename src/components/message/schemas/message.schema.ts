@@ -5,7 +5,7 @@ import { User } from 'src/components/user/schema/user.schema';
 
 export type MessageDocument = User & Document;
 
- @Schema({
+@Schema({
   versionKey: false,
   timestamps: true,
   collection: 'messages',

@@ -6,8 +6,9 @@ import { IUserToken } from './interfaces/user.token.interfaces';
 
 @Injectable()
 export class TokenService {
-  constructor(@InjectModel('Token') private readonly tokenModel: Model<IUserToken> ) {
-  }
+  constructor(
+    @InjectModel('Token') private readonly tokenModel: Model<IUserToken>,
+  ) {}
   async create(createUserTokenDto: CreateUserTokenDto): Promise<IUserToken> {
     return new this.tokenModel(createUserTokenDto).save();
   }

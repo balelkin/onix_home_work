@@ -9,8 +9,7 @@ import { MessageSchema } from './schemas/message.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Message', schema: MessageSchema }]),
-   forwardRef(()=>UserModule), 
-    
+    forwardRef(() => UserModule),
   ],
   controllers: [MessageController],
   providers: [MessageService],

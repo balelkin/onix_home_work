@@ -17,14 +17,14 @@ export class MessageService {
   }
 
   async getAllMessagesByRoom(roomId: string): Promise<IMessage[]> {
-      return this.messageRepository
+    return this.messageRepository
       .find({ roomId })
       .sort({ createdAt: -1 })
       .populate('ownerId')
       .populate('roomId')
       .lean();
   }
-  
+
   async getById(id: string): Promise<IMessage> {
     return this.messageRepository
       .findById(Types.ObjectId(id))

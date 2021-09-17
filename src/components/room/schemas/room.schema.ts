@@ -3,7 +3,6 @@ import * as mongoose from 'mongoose';
 import { Message } from 'src/components/message/schemas/message.schema';
 import { User } from 'src/components/user/schema/user.schema';
 
-
 export type RoomDocument = Room & Document;
 
 @Schema({
@@ -12,7 +11,6 @@ export type RoomDocument = Room & Document;
   collection: 'rooms',
 })
 export class Room {
-
   @Prop({ required: true })
   title: string;
 
@@ -27,8 +25,6 @@ export class Room {
     default: [],
   })
   usersId: User[];
-  
-  
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

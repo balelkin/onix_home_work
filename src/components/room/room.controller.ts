@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Render,
+  Redirect,
+} from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -12,12 +22,11 @@ import { ObjectId } from 'mongodb';
 @Controller('/room')
 export class RoomController {
   constructor(
-    private readonly roomService: RoomService, 
+    private readonly roomService: RoomService,
     private readonly userServise: UserService,
-    private readonly messageService: MessageService) {
+    private readonly messageService: MessageService,
+  ) {}
 
-    }
-  
   @Post('/save')
   @Redirect('/room')
   create(@Body() createRoomDto: CreateRoomDto) {
@@ -27,37 +36,39 @@ export class RoomController {
   @Get('/create')
   @Render('createRoom')
   @Redirect('/room')
-  createRoom(){}
+  createRoom() {}
 
-  
   @Get('/')
   @Render('rooms.hbs')
-  async findAll(@UserData() user)  {
-    const rooms = await this.roomService.findAll()
-    return  {title: 'chat', rooms};
+  async findAll(@UserData() user) {
+    const rooms = await this.roomService.findAll();
+    return { title: 'chat', rooms };
   }
 
   @Get('/:id/chat')
   @Render('chat.hbs')
   //@Redirect('/message/by-room/:roomId')
   async processChatRoom(@Param('id') id: string) {
-      const messages = await this.messageService.getAllMessagesByRoom(id)
-         
+    const messages = await this.messageService.getAllMessagesByRoom(id);
+
     return { title: 'chat room', messages };
   }
 
   @Patch('/:id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto):Promise<IRoom> {
+  update(
+    @Param('id') id: string,
+    @Body() updateRoomDto: UpdateRoomDto,
+  ): Promise<IRoom> {
     return this.roomService.update(id, updateRoomDto);
   }
 
   @Delete('/:id')
-  remove(@Param('id') id: string):Promise<IRoom> {
+  remove(@Param('id') id: string): Promise<IRoom> {
     return this.roomService.remove(id);
   }
-  
+
   @Get('/by-user/:ownerId')
   getAllRoomsByUser(@Param('ownerId') ownerId: string): Promise<IRoom[]> {
     return this.roomService.getAllRoomsByUser(ownerId);
   }
-} 
+}

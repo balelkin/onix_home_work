@@ -1,4 +1,3 @@
-
 export class ConfirmAccountDto {
-    token: string
+  token: string;
 }

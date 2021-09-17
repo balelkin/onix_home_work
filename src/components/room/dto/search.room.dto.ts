@@ -1,6 +1,3 @@
-
-
 export class SearchRoomDto {
-    readonly searchText: string;
-  }
-  
+  readonly searchText: string;
+}

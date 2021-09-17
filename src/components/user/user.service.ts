@@ -4,56 +4,60 @@ import { Model, Types } from 'mongoose';
 import { UserEntity } from './entities/user.entity';
 import { IUser } from './interfaces/user.interfaces';
 import * as bcrypt from 'bcrypt';
-import * as _ from 'lodash';  
+import * as _ from 'lodash';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoomService } from '../room/room.service';
-
 
 @Injectable()
 export class UserService {
   private readonly saltRound = 10;
-  constructor( 
+  constructor(
     @InjectModel('User')
-    private userRepository: Model<UserEntity>, 
-    private readonly roomService: RoomService)
-  { }
+    private userRepository: Model<UserEntity>,
+    private readonly roomService: RoomService,
+  ) {}
 
   async getUserByEmail(email: string): Promise<IUser> {
-    return this.userRepository.findOne({ email }).lean()
+    return this.userRepository.findOne({ email }).lean();
   }
-  
+
   async create(user): Promise<IUser> {
-    if (user.password){
-       const hash = await bcrypt.hash(user.password, 10);
-       var createdUser = new this.userRepository(
+    if (user.password) {
+      const hash = await bcrypt.hash(user.password, 10);
+      var createdUser = new this.userRepository(
         _.assignIn(user, { password: hash }),
-    );
+      );
     } else {
       const userFromDB = await this.getUserByEmail(user.email);
-      if (!userFromDB){
+      if (!userFromDB) {
         var createdUser = new this.userRepository(
-          _.assignIn(user, {googleToken: user.accessToken}, {token: user.token}),
-      );
+          _.assignIn(
+            user,
+            { googleToken: user.accessToken },
+            { token: user.token },
+          ),
+        );
       } else {
-        this.userRepository.findOneAndUpdate(user.email, {googleToken: user.accessToken})
-        return user
+        this.userRepository.findOneAndUpdate(user.email, {
+          googleToken: user.accessToken,
+        });
+        return user;
       }
-      
     }
-     
+
     return createdUser.save();
   }
 
- async findAll(): Promise<IUser> {
+  async findAll(): Promise<IUser> {
     return this.userRepository
-    .find()
-    .limit(20)
-    .sort({ name: 1 })
-    .populate('roomId')
-    .lean();
+      .find()
+      .limit(20)
+      .sort({ name: 1 })
+      .populate('roomId')
+      .lean();
   }
 
-   async getById(id: string): Promise<IUser> {
+  async getById(id: string): Promise<IUser> {
     return this.userRepository.findById(id);
   }
 

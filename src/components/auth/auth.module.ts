@@ -13,21 +13,20 @@ import { JwtStrategy } from './strategies/jwt.strategies';
 import { MailModule } from '../mail/mail.module';
 import { TokenModule } from '../token/token.module';
 
-
-@Module({ 
+@Module({
   imports: [
     TokenModule,
     MailModule,
-    UserModule, 
+    UserModule,
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     PassportModule,
     JwtModule.register({
       secret: constants.jwt.secret,
       signOptions: { expiresIn: '60s' },
-    })
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

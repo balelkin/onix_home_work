@@ -8,16 +8,18 @@ import { IsEmail } from 'class-validator';
 import { User } from '../user/schema/user.schema';
 import { Cookies } from '../auth/decorators/cookies.decorator';
 
-
 @Controller('message')
 export class MessageController {
-  constructor(private readonly messageService: MessageService, private readonly userService: UserService) {
-  }
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('/create')
-  async crete(@Body() createMessageDto: CreateMessageDto, @Cookies('email') email: string) {
-   
-  }
+  async crete(
+    @Body() createMessageDto: CreateMessageDto,
+    @Cookies('email') email: string,
+  ) {}
 
   @Get('/by-room/:roomId')
   getAllMessagesByRoom(@Param() roomId): Promise<IMessage[]> {

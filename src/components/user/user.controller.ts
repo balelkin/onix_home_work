@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Inject, forwardRef } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,15 +19,18 @@ import { IUser } from './interfaces/user.interfaces';
 
 @Controller('user')
 export class UserController {
-  constructor(@Inject(forwardRef(() => UserService)) private readonly userService: UserService ){}
-  
+  constructor(
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
+  ) {}
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
   @Get('getByEmail')
   getUserByEmail(@Param('email') email: string) {
-    return this.userService.getUserByEmail(email)
+    return this.userService.getUserByEmail(email);
   }
 
   @Get()
@@ -26,12 +40,12 @@ export class UserController {
 
   @Get('/:id')
   findById(@Param('id') id: string) {
-    return this.userService.getById(id)
+    return this.userService.getById(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-   return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')

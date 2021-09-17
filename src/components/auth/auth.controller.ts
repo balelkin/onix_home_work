@@ -1,4 +1,21 @@
-import { Controller, Get, Post,  Inject, forwardRef, UseGuards, Body, HttpCode, Req, Redirect, Res, Render, Query, ForbiddenException, Patch, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Inject,
+  forwardRef,
+  UseGuards,
+  Body,
+  HttpCode,
+  Req,
+  Redirect,
+  Res,
+  Render,
+  Query,
+  ForbiddenException,
+  Patch,
+  ValidationPipe,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import SignInDto from './dto/sign.in.dto';
@@ -15,45 +32,42 @@ import { query } from 'express';
 import { ConfirmAccountDto } from './dto/confirmAccountDto';
 import { Request, Response } from 'express';
 
-
 @Controller('auth')
 export class AuthController {
   constructor(
-     private readonly authService: AuthService, 
-     private readonly jwtService: JwtService
-     ) {}
-  
-      
-     
-     
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+  ) {}
+
   @UseGuards(LocalAuthGuard)
   @Post('/sign-in')
   @HttpCode(200)
   @Redirect('/room')
-  async signIn(@Body() signIn: SignInDto, @Res() res, @UserData() user: UserEntity) { 
-   
-  const { accessToken } = await this.authService.signIn(signIn)
-  
-  
-   const dataForLogit = await this.authService.login(signIn);
-   res.cookie('accessToken', dataForLogit.accessToken);
-   res.cookie('refreshToken', dataForLogit.refreshToken)
-   res.cookie('avatar', dataForLogit.user.avatar)
-   res.cookie('name', dataForLogit.user.name)
-      
-   return true;
+  async signIn(
+    @Body() signIn: SignInDto,
+    @Res() res,
+    @UserData() user: UserEntity,
+  ) {
+    const { accessToken } = await this.authService.signIn(signIn);
+
+    const dataForLogit = await this.authService.login(signIn);
+    res.cookie('accessToken', dataForLogit.accessToken);
+    res.cookie('refreshToken', dataForLogit.refreshToken);
+    res.cookie('avatar', dataForLogit.user.avatar);
+    res.cookie('name', dataForLogit.user.name);
+
+    return true;
   }
 
-@UseGuards(JwtAuthGuard)
-@Get('/user-room')
-@Render('room.hbs')
-@HttpCode(200)
-getRoom (@Req() req){
-  
-  return {
-    user: req.user 
+  @UseGuards(JwtAuthGuard)
+  @Get('/user-room')
+  @Render('room.hbs')
+  @HttpCode(200)
+  getRoom(@Req() req) {
+    return {
+      user: req.user,
+    };
   }
-}
 
   @Get('/sign/in/by/token')
   @HttpCode(200)
@@ -75,7 +89,7 @@ getRoom (@Req() req){
       };
     });
   }
-  
+
   @Post('refreshToken')
   @HttpCode(200)
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
@@ -85,44 +99,38 @@ getRoom (@Req() req){
     if (!verifiedUser) {
       throw new ForbiddenException();
     }
-       const payload = {
+    const payload = {
       id: verifiedUser.id,
       email: verifiedUser.email,
       name: verifiedUser.name,
     };
- }
- 
- @Post('/forgotPassword')
- @Render('confirmEmail')
- @Redirect('/changePassword')
- @HttpCode(201)
+  }
+
+  @Post('/forgotPassword')
+  @Render('confirmEmail')
+  @Redirect('/changePassword')
+  @HttpCode(201)
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto);
   }
- 
+
   @Redirect('./changePassword')
   @Patch('/changePassword')
   @Render('changePassword')
   @HttpCode(201)
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    
     return this.authService.changePassword(changePasswordDto);
   }
 
   @Get('/confirmEmail')
   @Render('login')
-  async confirm(@Query(ValidationPipe) query: ConfirmAccountDto ){
-    await this.authService.confirm(query.token)
+  async confirm(@Query(ValidationPipe) query: ConfirmAccountDto) {
+    await this.authService.confirm(query.token);
   }
- 
-  
+
   @Get('/logout')
   @Render('index')
   async logout(@Req() req: Request) {
-    
     return this.authService.logout(req.cookies.accessToken);
+  }
 }
-}
-
-  
-  

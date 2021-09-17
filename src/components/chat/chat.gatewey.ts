@@ -1,30 +1,27 @@
 import {
-    SubscribeMessage,
-    WebSocketGateway,
-    OnGatewayInit,
-    WebSocketServer,
-    OnGatewayConnection,
-    OnGatewayDisconnect,
-    } from '@nestjs/websockets';
+  SubscribeMessage,
+  WebSocketGateway,
+  OnGatewayInit,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
 import { ObjectId } from 'mongodb';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { AuthService } from "src/components/auth/auth.service";
-import { MessageService } from "src/components/message/message.service";
-import { RoomService } from "src/components/room/room.service";
+import { AuthService } from 'src/components/auth/auth.service';
+import { MessageService } from 'src/components/message/message.service';
+import { RoomService } from 'src/components/room/room.service';
 import { UserService } from '../user/user.service';
 
-
-
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayInit{
-constructor(
-    private readonly messageService: MessageService, 
+export class ChatGateway implements OnGatewayInit {
+  constructor(
+    private readonly messageService: MessageService,
     private readonly roomService: RoomService,
-    private readonly authService: AuthService, 
-    private readonly userServise: UserService
-){}
-
+    private readonly authService: AuthService,
+    private readonly userServise: UserService,
+  ) {}
 
   @WebSocketServer() wss: Server;
 
@@ -44,7 +41,9 @@ constructor(
 
   async getUserId(cookie: string) {
     const separateCookies = cookie.split(';');
-    const userPart = separateCookies.filter((i) => i.trim().slice(0, 11) === 'accessToken');
+    const userPart = separateCookies.filter(
+      (i) => i.trim().slice(0, 11) === 'accessToken',
+    );
     const token = userPart[0].split('=')[1];
     const tokenPayload = await this.authService.getTokenPayload(token);
 
@@ -57,31 +56,54 @@ constructor(
   }
 
   @SubscribeMessage('setUserRoom')
-  async setUserRoom(client: Socket, data: { roomId: string, accessToken: string }) {
-    const tokenPayload = await this.authService.getTokenPayload(data.accessToken);
-    await this.roomService.joinUserToRoom(new ObjectId(data.roomId), tokenPayload.uId);
-    client.join(data.roomId); 
-    const messages = await this.messageService.getAllMessagesByRoom(data.roomId)
-    this.wss.to(data.roomId).emit('addUser', { user: tokenPayload.uEmail, userId: tokenPayload.uId, text: messages});
+  async setUserRoom(
+    client: Socket,
+    data: { roomId: string; accessToken: string },
+  ) {
+    const tokenPayload = await this.authService.getTokenPayload(
+      data.accessToken,
+    );
+    await this.roomService.joinUserToRoom(
+      new ObjectId(data.roomId),
+      tokenPayload.uId,
+    );
+    client.join(data.roomId);
+    const messages = await this.messageService.getAllMessagesByRoom(
+      data.roomId,
+    );
+    this.wss.to(data.roomId).emit('addUser', {
+      user: tokenPayload.uEmail,
+      userId: tokenPayload.uId,
+      text: messages,
+    });
   }
 
   @SubscribeMessage('clientToServer')
-  async handleMessage(client: Socket, data: { text: string; accessToken: string; roomId: string; userId: string; name: string; avatar: string; email: string;}, ) {
-    const tokenPayload = await this.authService.getTokenPayload(data.accessToken)
-    const user = this.userServise.getUserByEmail(tokenPayload.email)
-      
-          
+  async handleMessage(
+    client: Socket,
+    data: {
+      text: string;
+      accessToken: string;
+      roomId: string;
+      userId: string;
+      name: string;
+      avatar: string;
+      email: string;
+    },
+  ) {
+    const tokenPayload = await this.authService.getTokenPayload(
+      data.accessToken,
+    );
+    const user = this.userServise.getUserByEmail(tokenPayload.email);
+
     await this.messageService.create({
       text: data.text,
       roomId: new ObjectId(data.roomId),
-      ownerId: (await user)._id 
-
+      ownerId: (await user)._id,
     });
     this.wss.to(data.roomId).emit('serverToClient', {
-     
       text: data.text,
-      name: data.name
-         
+      name: data.name,
     });
   }
 }
