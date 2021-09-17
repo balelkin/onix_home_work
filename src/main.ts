@@ -24,7 +24,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
   console.log('Server started on port 3000');
   Logger.log('User microservice running');
   
