@@ -12,8 +12,6 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "prestart:prod": "rimraf dist && npm run build",
-    "postinstall": "npm run prestart:prod",
     "start:prod": "node dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build"
