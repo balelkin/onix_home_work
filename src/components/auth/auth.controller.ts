@@ -82,7 +82,7 @@ export class AuthController {
     const email = userData.email.toLocaleLowerCase();
     const user = userData;
     user.email = email;
-    return this.authService.register(user).then((newUser) => {
+    return await this.authService.register(user).then((newUser) => {
       return {
         message: 'User was created successfully.',
         user: newUser,
