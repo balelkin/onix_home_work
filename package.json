@@ -5,11 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node main",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "prestart:prod": "rimraf dist && npm run build",
@@ -19,7 +20,7 @@
     "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "dependencies": {
-    "@nest-middlewares/cookie-parser": "^6.0.0",
+    "@nest-middlewares/cookie-parser": "6.0.0",
     "@nestjs/common": "7.6.18",
     "@nestjs/config": "1.0.1",
     "@nestjs/core": "7.6.15",
@@ -33,7 +34,7 @@
     "@ntegral/nestjs-sendgrid": "1.0.0",
     "@sendgrid/mail": "7.4.6",
     "bcrypt": "5.0.1",
-    "chalk": "^4.1.2",
+    "chalk": "4.1.2",
     "class-transformer": "0.4.0",
     "class-validator": "0.13.1",
     "cookie-parser": "1.4.5",
@@ -45,6 +46,7 @@
     "materialize-css": "1.0.0",
     "moment": "2.29.1",
     "mongoose": "5.13.7",
+    "node": "^16.9.1",
     "passport": "0.4.1",
     "passport-google-oauth20": "2.0.0",
     "passport-jwt": "4.0.0",
@@ -65,7 +67,7 @@
     "@types/js-cookie": "2.2.7",
     "@types/jsonwebtoken": "8.5.4",
     "@types/node": "14.14.36",
-    "@types/passport-google-oauth20": "^2.0.9",
+    "@types/passport-google-oauth20": "2.0.9",
     "@types/passport-jwt": "3.0.6",
     "@types/passport-local": "1.0.34",
     "@types/supertest": "2.0.10",
@@ -100,7 +102,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-"engines": {
-  "node": "14.17.5"
-}
+  "engines": {
+    "node": "14.17.6"
+  }
 }
