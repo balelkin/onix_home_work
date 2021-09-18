@@ -8,7 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { constants } from 'src/constants/jwt.constants';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../user/schema/user.schema';
-import { GoogleStrategy } from './strategies/google.strategies';
 import { JwtStrategy } from './strategies/jwt.strategies';
 import { MailModule } from '../mail/mail.module';
 import { TokenModule } from '../token/token.module';
@@ -26,7 +25,7 @@ import { TokenModule } from '../token/token.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
