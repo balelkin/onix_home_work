@@ -97,6 +97,7 @@ export class AuthService {
 
   async register(user: SignUpDto) {
     const newUser = await this.userService.create(user);
+    console.log(newUser);
     await this.sendConfirmation(newUser);
     return true;
   }

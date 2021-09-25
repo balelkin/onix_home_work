@@ -81,9 +81,10 @@ export class AuthController {
   async signUp(@Body() userData: SignUpDto) {
     const email = userData.email.toLocaleLowerCase();
     const user = userData;
-    user.email = email;
+    user.email = email; 
     return await this.authService.register(user).then((newUser) => {
-      return {
+     console.log('1111', newUser);
+     return {
         message: 'User was created successfully.',
         user: newUser,
       };
