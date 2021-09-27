@@ -18,6 +18,7 @@ import { UserData } from '../auth/decorators/user.decorator';
 import { IsEmail } from 'class-validator';
 import { MessageService } from '../message/message.service';
 import { ObjectId } from 'mongodb';
+import { compact } from 'lodash';
 
 @Controller('/room')
 export class RoomController {
@@ -36,22 +37,24 @@ export class RoomController {
   @Get('/create')
   @Render('createRoom')
   @Redirect('/room')
-  createRoom() {}
+  async createRoom(@UserData() user) {
+const uId = await this.userServise.getById(user._id)
+return user;
+
+  }
 
   @Get('/')
   @Render('rooms.hbs')
   async findAll(@UserData() user) {
     const rooms = await this.roomService.findAll();
-    return { title: 'chat', rooms };
+       return { title: 'chat', rooms };
   }
 
   @Get('/:id/chat')
   @Render('chat.hbs')
-  //@Redirect('/message/by-room/:roomId')
-  async processChatRoom(@Param('id') id: string) {
+  async processChatRoom(@Param('id') id: string, @UserData() user) {
     const messages = await this.messageService.getAllMessagesByRoom(id);
-
-    return { title: 'chat room', messages };
+    return { title: 'chat room', messages};
   }
 
   @Patch('/:id')

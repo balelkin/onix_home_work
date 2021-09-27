@@ -55,6 +55,7 @@ export class AuthController {
     res.cookie('refreshToken', dataForLogit.refreshToken);
     res.cookie('avatar', dataForLogit.user.avatar);
     res.cookie('name', dataForLogit.user.name);
+    res.cookie('id', dataForLogit.user._id)
 
     return true;
   }

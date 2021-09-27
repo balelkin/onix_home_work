@@ -34,8 +34,8 @@
       </div>
     <div class="row">
         <div class="input-field col s12">
-    <input id="password" type="text" value="{{this._id}}" class="validate" name="ownerId">
-       <span class="helper-text" data-error="wrong" data-success="right">{{user.name}}</span>
+    <input style="visibility: hidden;" id="password" type="text" value="{{id}}" class="validate" name="ownerId">
+       <span style="font-size: large; color: red; font-weight: bold" class="helper-text" data-error="wrong" data-success="right">Owner: {{name}}</span>
         </div>
       </div>
       <div class="file-field input-field">
@@ -44,4 +44,5 @@
   </form>
  
 </body>
+
 </html>

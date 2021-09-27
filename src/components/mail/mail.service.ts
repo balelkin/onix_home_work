@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import * as mailService from '@sendgrid/mail';
+import * as Mailgun from 'mailgun-js';
+import { ConfigService } from '@nestjs/config';
 import { IMailInterface } from './interfaces/mail.interface';
+
+
+console.log(process.env.MAILGUN_API_KEY);
 
 @Injectable()
 export class MailService {
-  async sendEmail(emailData: IMailInterface) {
-    mailService.setApiKey(process.env.client_secret);
+   
+  private mg = new Mailgun({ apiKey: '5dc634c759a88e14bfb625b14c99940a-45f7aa85-635ef2a9', domain: 'sandbox9f839483ea9a4bccaa01da5ed7ddd13b.mailgun.org' });
 
-    const msg = {
-      from: 'balelkinn@gmail.com',
-      to: emailData.to,
-      subject: emailData.subject,
-      html: emailData.html,
-    };
+  constructor(private configService: ConfigService) {}
 
-    mailService
-      .send(msg)
-      .then((res) => {
-        console.log('res: ', res);
-      })
-      .catch((err) => {
-        console.log('err: ', JSON.stringify(err));
+  send(data: IMailInterface): Promise<Mailgun.messages.SendResponse> {
+    return new Promise((res, rej) => {
+      this.mg.messages().send(data, function (error, body) {
+        if (error) {
+          rej(error);
+        }
+        res(body);
       });
+    });
   }
 }

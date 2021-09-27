@@ -24,6 +24,7 @@ import { ISafeUser } from '../user/interfaces/safeUser.interface';
 import SignInDto from './dto/sign.in.dto';
 import * as _ from 'lodash';
 import { ProtectedFieldsEnum } from '../user/enums/protected-fields.enum';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,7 @@ export class AuthService {
     private jwtService: JwtService,
     private tokenService: TokenService,
     private mailService: MailService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -97,7 +99,6 @@ export class AuthService {
 
   async register(user: SignUpDto) {
     const newUser = await this.userService.create(user);
-    console.log(newUser);
     await this.sendConfirmation(newUser);
     return true;
   }
@@ -112,8 +113,8 @@ export class AuthService {
     const token = await this.signUser(user);
     const changePasswordLink = `${process.env.FE_APP_URL}changePassword?token=${token}`;
 
-    await this.mailService.sendEmail({
-      from: process.env.SENDER_EMAIL,
+    await this.mailService.send({
+      from: "balelkinn@gmail.com",
       to: user.email,
       subject: 'Change password link',
       html: `
@@ -223,8 +224,8 @@ export class AuthService {
     const token = await this.generateToken(tokenPayload);
     const confirmLink = `${process.env.FE_APP_URL}auth/confirmEmail?token=${token}`;
     await this.saveToken({ token, uId: user._id, expireAt });
-    await this.mailService.sendEmail({
-      from: process.env.SENDER_EMAIL,
+    await this.mailService.send({
+      from: 'balelkinn@gmail.com',
       to: user.email,
       subject: 'Verify user',
       html: `

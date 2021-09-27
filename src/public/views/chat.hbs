@@ -39,13 +39,13 @@
 </form> 
 </div>
 <div class="col-4 p-2 mb-2" style="height: 700px;" id="usersWrapper">
-    <div class="container d-flex justify-content-between flex-wrap" id="usersContainer">
+    <div style="visibility: hidden;" sclass="container d-flex justify-content-between flex-wrap" id="usersContainer">
       {{#each users }}
-          <div class="avatar-container" id="{{ user._id }}">
+          <div class="avatar-container" id="{{ id }}">
             <div class="avatar-img">
-              <img src="{{ user.userAvatar }}" style="border: 1px solid grey;border-radius: 50%">
+              <img src="{{ avatar }}" style="border: 1px solid grey;border-radius: 50%">
             </div>
-            <div class="avatar-name d-flex justify-content-center">{{ avatarName }}</div>
+            <div class="avatar-name d-flex justify-content-center">{{ name }}</div>
           </div>
         {{/each}}
     </div>

@@ -57,8 +57,8 @@ export class UserService {
       .lean();
   }
 
-  async getById(id: string): Promise<IUser> {
-    return this.userRepository.findById(id);
+  async getById(_id: Types.ObjectId): Promise<IUser> {
+    return this.userRepository.findById(_id);
   }
 
   async remove(id: string): Promise<IUser> {

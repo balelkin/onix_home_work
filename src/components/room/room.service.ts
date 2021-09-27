@@ -54,12 +54,12 @@ export class RoomService {
   async leaveUserFromRoom(roomId, usersId) {
     return this.roomRepository.findByIdAndUpdate(
       { _id: roomId },
-      { $push: { connectedUsers: usersId } },
+      { $pull: { connectedUsers: usersId } },
     );
   }
 
   async joinUserToRoom(roomId, userId) {
-    return this.roomRepository.findByIdAndUpdate(
+     return this.roomRepository.findByIdAndUpdate(
       Types.ObjectId(roomId),
       { $addToSet: { usersId: Types.ObjectId(userId) } },
       { new: true },
