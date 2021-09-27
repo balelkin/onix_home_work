@@ -48,6 +48,7 @@ export class AuthController {
     @Res() res,
     @UserData() user: UserEntity,
   ) {
+    // check why we need it?
     const { accessToken } = await this.authService.signIn(signIn);
 
     const dataForLogit = await this.authService.login(signIn);
@@ -57,6 +58,7 @@ export class AuthController {
     res.cookie('name', dataForLogit.user.name);
     res.cookie('id', dataForLogit.user._id)
 
+    // redirect from server
     return true;
   }
 
@@ -66,10 +68,12 @@ export class AuthController {
   @HttpCode(200)
   getRoom(@Req() req) {
     return {
+      // use decorator
       user: req.user,
     };
   }
 
+  // remove route
   @Get('/sign/in/by/token')
   @HttpCode(200)
   async signInByToken(@Query('token') token: string) {
@@ -77,13 +81,20 @@ export class AuthController {
   }
 
   @Post('sign-up')
+  // name for files must include . or - (not camel case)
   @Render('confirmEmail')
   @HttpCode(201)
   async signUp(@Body() userData: SignUpDto) {
+    // check function programming immutable
+    // or go with one variable
     const email = userData.email.toLocaleLowerCase();
     const user = userData;
-    user.email = email; 
+    // break line after vars
+    user.email = email;
+    // empty line before return
+    // return await?
     return await this.authService.register(user).then((newUser) => {
+      // remove console.log
      console.log('1111', newUser);
      return {
         message: 'User was created successfully.',
@@ -92,9 +103,11 @@ export class AuthController {
     });
   }
 
+  // do you need guard?
   @Post('refreshToken')
   @HttpCode(200)
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    // check async?
     const verifiedUser = this.jwtService.verify(refreshTokenDto.refreshToken, {
       secret: constants.jwt.secret,
     });
@@ -106,8 +119,10 @@ export class AuthController {
       email: verifiedUser.email,
       name: verifiedUser.name,
     };
+    // no return?
   }
 
+  // must be link on fronend side
   @Post('/forgotPassword')
   @Render('confirmEmail')
   @Redirect('/changePassword')
@@ -133,6 +148,7 @@ export class AuthController {
   @Get('/logout')
   @Render('index')
   async logout(@Req() req: Request) {
+    // need clear refresh
     return this.authService.logout(req.cookies.accessToken);
   }
 }

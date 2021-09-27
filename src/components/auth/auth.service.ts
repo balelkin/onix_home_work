@@ -52,11 +52,17 @@ export class AuthService {
   async signIn({ email, password }: SignInDto) {
     const user = await this.userService.getUserByEmail(email);
 
+    // better write if -> throw
+    // if (!user) {...}
+    // if (!compared) {...}
+
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = await this.signUser(user);
       const safeUser = user as ISafeUser;
       safeUser.accessToken = token;
 
+      // cehck serialize nest js
+      // https://docs.nestjs.com/techniques/serialization
       return _.omit(safeUser, Object.values(ProtectedFieldsEnum));
     }
     throw new NotFoundException('user not found');
@@ -81,6 +87,7 @@ export class AuthService {
     };
 
     const userFromDB = await this.userService.getUserByEmail(payload.email);
+    // if (!userFromDB)
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: constants.jwt.expirationTime.accessTokenExpirationTime,
       secret: constants.jwt.secret,
@@ -97,6 +104,7 @@ export class AuthService {
     };
   }
 
+  // !added validation to all dto
   async register(user: SignUpDto) {
     const newUser = await this.userService.create(user);
     await this.sendConfirmation(newUser);
@@ -104,15 +112,21 @@ export class AuthService {
   }
 
   async getTokenPayload(token: string) {
+    // the same
     return await this.jwtService.verify(token);
   }
 
   async forgotPassword({ email }: ForgotPasswordDto): Promise<void> {
     const user = await this.userService.getUserByEmail(email);
+    // write to multiline
     if (!user) throw new BadRequestException('Wrong email');
     const token = await this.signUser(user);
+    // FE_APP_URL -> BASE_URL
     const changePasswordLink = `${process.env.FE_APP_URL}changePassword?token=${token}`;
 
+    // !if Error -> redirect to server error page with
+    // !flash message
+    // Forbiden! Server Error! Not Found!
     await this.mailService.send({
       from: "balelkinn@gmail.com",
       to: user.email,
@@ -128,6 +142,7 @@ export class AuthService {
     password,
     token,
   }: ChangePasswordDto): Promise<boolean> {
+    // promise all
     const tokenPayload = await this.verifyToken(token);
     const newPassword = await this.userService.hashPassword(password);
 
@@ -193,6 +208,7 @@ export class AuthService {
     return this.jwtService.sign(tokePayload);
   }
 
+  // why do you need it?
   async saveToken(createUserTokenDto: CreateUserTokenDto) {
     return this.tokenService.create(createUserTokenDto);
   }
