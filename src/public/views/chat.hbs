@@ -43,7 +43,7 @@
       {{#each users }}
           <div class="avatar-container" id="{{ id }}">
             <div class="avatar-img">
-              <img src="{{ avatar }}" style="border: 1px solid grey;border-radius: 50%">
+              <img src="{{ avatar }}" style="border: 1px solid grey; border-radius: 50%">
             </div>
             <div class="avatar-name d-flex justify-content-center">{{ name }}</div>
           </div>
@@ -60,7 +60,7 @@
   socket.on('serverToClient', function(msg) {
     let chatBox = document.getElementById('chatBox');
     let msgDiv = document.createElement('div');
-    msgDiv.style =  "border-radius: 20px; background-color: rgba(7, 248, 236, 0.5); margin: 15px; padding: 10px;"
+    msgDiv.style = "border-radius: 20px; background-color: rgba(7, 248, 236, 0.5); margin: 15px; padding: 10px;"
     msgDiv.innerText = msg.text;
     let userStrong = document.createElement('strong')
     userStrong.innerText = msg.name + ': ';

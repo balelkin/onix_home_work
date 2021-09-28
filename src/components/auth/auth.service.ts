@@ -19,11 +19,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { MailService } from '../mail/mail.service';
 import { CreateUserTokenDto } from '../token/dto/create.uToken.dto';
 import { statusEnum } from '../user/enums/status.enum';
-import { Request, Response } from 'express';
-import { ISafeUser } from '../user/interfaces/safeUser.interface';
-import SignInDto from './dto/sign.in.dto';
 import * as _ from 'lodash';
-import { ProtectedFieldsEnum } from '../user/enums/protected-fields.enum';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -38,38 +34,31 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userService.getUserByEmail(email);
+
     if (!user) {
       throw new NotFoundException({
         message: 'User with this email not found',
       });
     }
+
     const passwordCompared = await bcrypt.compare(pass, user.password);
+
     if (!passwordCompared) {
       throw new BadRequestException({ message: 'Password does not match' });
     }
     return true;
   }
-  async signIn({ email, password }: SignInDto) {
-    const user = await this.userService.getUserByEmail(email);
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = await this.signUser(user);
-      const safeUser = user as ISafeUser;
-      safeUser.accessToken = token;
-
-      return _.omit(safeUser, Object.values(ProtectedFieldsEnum));
-    }
-    throw new NotFoundException('user not found');
-  }
 
   private async decodeToken(token: string): Promise<IUser> {
     const decodeToken = this.jwtService.decode(token) as IUser;
+
     if (!decodeToken) {
       throw new BadRequestException({
         statusCode: 400,
         message: 'Token is invalid',
       });
     }
+
     return decodeToken;
   }
 
@@ -81,6 +70,13 @@ export class AuthService {
     };
 
     const userFromDB = await this.userService.getUserByEmail(payload.email);
+
+    if (!userFromDB) {
+      throw new NotFoundException({
+        message: 'User with this email not found',
+      });
+    }
+
     const accessToken = this.jwtService.sign(payload, {
       expiresIn: constants.jwt.expirationTime.accessTokenExpirationTime,
       secret: constants.jwt.secret,
@@ -104,17 +100,24 @@ export class AuthService {
   }
 
   async getTokenPayload(token: string) {
-    return await this.jwtService.verify(token);
+    return this.jwtService.verify(token);
   }
 
   async forgotPassword({ email }: ForgotPasswordDto): Promise<void> {
     const user = await this.userService.getUserByEmail(email);
-    if (!user) throw new BadRequestException('Wrong email');
-    const token = await this.signUser(user);
-    const changePasswordLink = `${process.env.FE_APP_URL}changePassword?token=${token}`;
 
-    await this.mailService.send({
-      from: "balelkinn@gmail.com",
+    if (!user) {
+      throw new BadRequestException('Wrong email');
+    }
+
+    const token = await this.signUser(user);
+    const changePasswordLink = `${process.env.BASE_URL}changePassword?token=${token}`;
+
+    if (Error) {
+    }
+
+    await this.mailService.sendEmail({
+      from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: 'Change password link',
       html: `
@@ -124,21 +127,22 @@ export class AuthService {
     });
   }
 
-  async changePassword({
-    password,
-    token,
-  }: ChangePasswordDto): Promise<boolean> {
+  async changePassword({ password, token }: ChangePasswordDto) {
     const tokenPayload = await this.verifyToken(token);
     const newPassword = await this.userService.hashPassword(password);
 
-    await this.userService.updatePassword(tokenPayload.uId, newPassword);
-    await this.tokenService.deleteAll(tokenPayload.uId);
-    return true;
+    return Promise.all([
+      this.userService.updatePassword(tokenPayload.uId, newPassword),
+      this.tokenService.deleteAll(tokenPayload.uId),
+    ]).then((data) => {
+      return data;
+    });
   }
 
   async login(user: IAuthLoginInput) {
     const payload = { email: user.email, uId: user._id };
     const userFromDB = await this.userService.getUserByEmail(user.email);
+
     if (userFromDB) {
       const accessToken = this.jwtService.sign(payload, {
         expiresIn: constants.jwt.expirationTime.accessTokenExpirationTime,
@@ -161,9 +165,11 @@ export class AuthService {
   async verifyToken(token: string): Promise<ITokenPayload> {
     const tokenPayload = this.jwtService.verify(token);
     const tokenExist = await this.tokenService.exist(tokenPayload.uId, token);
+
     if (tokenExist) {
       return tokenPayload;
     }
+
     throw new UnauthorizedException();
   }
 
@@ -196,16 +202,19 @@ export class AuthService {
   async saveToken(createUserTokenDto: CreateUserTokenDto) {
     return this.tokenService.create(createUserTokenDto);
   }
+
   async logout(token: string) {
     const tokenPayload = await this.getTokenPayload(token);
 
-    return this.tokenService.deleteAll(tokenPayload.uId);
+    return this.tokenService.deleteAll(tokenPayload.email);
   }
 
   async confirm(token: string): Promise<IUser> {
     const data = await this.getTokenPayload(token);
     const user = await this.userService.getById(data.uId);
+
     await this.tokenService.delete(data.uId, token);
+
     if (user && user.status === statusEnum.pending) {
       user.status = statusEnum.active;
       return user.save();
@@ -222,10 +231,11 @@ export class AuthService {
     };
     const expireAt = moment().add(1, 'day').toISOString();
     const token = await this.generateToken(tokenPayload);
-    const confirmLink = `${process.env.FE_APP_URL}auth/confirmEmail?token=${token}`;
+    const confirmLink = `${process.env.BASE_URL}auth/confirmEmail?token=${token}`;
+
     await this.saveToken({ token, uId: user._id, expireAt });
-    await this.mailService.send({
-      from: 'balelkinn@gmail.com',
+    await this.mailService.sendEmail({
+      from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: 'Verify user',
       html: `

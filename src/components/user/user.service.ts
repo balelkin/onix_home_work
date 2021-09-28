@@ -29,6 +29,7 @@ export class UserService {
       );
     } else {
       const userFromDB = await this.getUserByEmail(user.email);
+
       if (!userFromDB) {
         var createdUser = new this.userRepository(
           _.assignIn(
@@ -63,7 +64,9 @@ export class UserService {
 
   async remove(id: string): Promise<IUser> {
     const user = await this.getById(id);
+
     await this.roomService.leaveUserFromRoom(user.roomId, id);
+
     return this.userRepository.findByIdAndRemove(Types.ObjectId(id));
   }
 
@@ -79,10 +82,13 @@ export class UserService {
 
   async joinToRoom(userId: string, roomId: string) {
     const user = await this.getById(userId);
+
     if (user.roomId !== null) {
       await this.roomService.leaveUserFromRoom(user.roomId, userId);
     }
+
     await this.roomService.joinUserToRoom(roomId, userId);
+
     return this.userRepository.findByIdAndUpdate(
       Types.ObjectId(userId),
       { roomId: Types.ObjectId(roomId) },
@@ -92,7 +98,9 @@ export class UserService {
 
   async leaveFromRoom(userId: string): Promise<IUser> {
     const user = await this.getById(userId);
+
     await this.roomService.leaveUserFromRoom(user.roomId, userId);
+
     return this.userRepository.findByIdAndUpdate(Types.ObjectId(userId), {
       roomId: null,
     });
@@ -108,7 +116,8 @@ export class UserService {
   }
   async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(this.saltRound);
-    return await bcrypt.hash(password, salt);
+
+    return bcrypt.hash(password, salt);
   }
   async removeAllUsersFromRoom(roomId: string) {
     return this.userRepository.updateMany(
@@ -117,8 +126,7 @@ export class UserService {
       { new: true },
     );
   }
-  async updatePassword(uId: string, password: string): Promise<boolean> {
-    await this.userRepository.updateOne({ _id: uId }, { password });
-    return true;
+  async updatePassword(uId: string, password: string) {
+    return this.userRepository.updateOne({ _id: uId }, { password });
   }
 }

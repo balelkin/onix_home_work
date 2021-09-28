@@ -15,10 +15,7 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { UserService } from '../user/user.service';
 import { IRoom } from './interfaces/room.interfaces';
 import { UserData } from '../auth/decorators/user.decorator';
-import { IsEmail } from 'class-validator';
 import { MessageService } from '../message/message.service';
-import { ObjectId } from 'mongodb';
-import { compact } from 'lodash';
 
 @Controller('/room')
 export class RoomController {
@@ -38,23 +35,22 @@ export class RoomController {
   @Render('createRoom')
   @Redirect('/room')
   async createRoom(@UserData() user) {
-const uId = await this.userServise.getById(user._id)
-return user;
-
+    const uId = await this.userServise.getById(user._id);
+    return user;
   }
 
   @Get('/')
   @Render('rooms.hbs')
-  async findAll(@UserData() user) {
+  async findAll() {
     const rooms = await this.roomService.findAll();
-       return { title: 'chat', rooms };
+    return { title: 'chat', rooms };
   }
 
   @Get('/:id/chat')
   @Render('chat.hbs')
-  async processChatRoom(@Param('id') id: string, @UserData() user) {
+  async processChatRoom(@Param('id') id: string) {
     const messages = await this.messageService.getAllMessagesByRoom(id);
-    return { title: 'chat room', messages};
+    return { title: 'chat room', messages };
   }
 
   @Patch('/:id')

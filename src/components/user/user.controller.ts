@@ -13,8 +13,6 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthService } from '../auth/auth.service';
-import { User } from './schema/user.schema';
 import { IUser } from './interfaces/user.interfaces';
 
 @Controller('user')
@@ -28,6 +26,7 @@ export class UserController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
+
   @Get('getByEmail')
   getUserByEmail(@Param('email') email: string) {
     return this.userService.getUserByEmail(email);

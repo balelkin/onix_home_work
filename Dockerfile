@@ -2,10 +2,12 @@ FROM node
 
 WORKDIR /app
 
-COPY . . 
+COPY . .
 
-RUN npm install
+RUN npm ci
 
-EXPOSE 3000
+ENV PORT 3000
+
+EXPOSE $PORT
 
 CMD ["node", "dist/main.js"]

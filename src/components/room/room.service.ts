@@ -59,7 +59,7 @@ export class RoomService {
   }
 
   async joinUserToRoom(roomId, userId) {
-     return this.roomRepository.findByIdAndUpdate(
+    return this.roomRepository.findByIdAndUpdate(
       Types.ObjectId(roomId),
       { $addToSet: { usersId: Types.ObjectId(userId) } },
       { new: true },

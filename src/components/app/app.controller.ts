@@ -1,13 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Header,
-  HttpCode,
-  Render,
-} from '@nestjs/common';
+import { Controller, Get, HttpCode, Render } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
-import { ForgotPasswordDto } from '../auth/dto/forgot-password.dto';
 
 @Controller()
 export default class AppController {
@@ -34,17 +26,8 @@ export default class AppController {
   async forgotPassword() {}
 
   @Get('/changePassword')
-  @Render('changePassword')
+  @Render('change-password')
   changePassword() {
     return { title: 'change Password' };
-  }
-
-  @Get('healthcheck')
-  async healthcheck() {
-    const now = Date.now();
-    return {
-      status: 'Vibe API Online',
-      uptime: Number((now - this.start) / 1000).toFixed(0),
-    };
   }
 }

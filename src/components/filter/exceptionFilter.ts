@@ -19,7 +19,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (status === 403 || status === 401) {
-      response.redirect([process.env.FE_APP_URL]);
+      response.redirect([process.env.BASE_URL]);
     } else if (exception.code === 11000) {
       response.status(status).json({
         statusCode: status,

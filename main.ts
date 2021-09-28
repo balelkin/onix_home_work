@@ -3,7 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './src/components/app/app.module';
 import * as cookieParser from 'cookie-parser';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, Render, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './src/components/filter/exceptionFilter';
 
 async function bootstrap() {
@@ -18,8 +18,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
+  
   await app.listen(process.env.PORT || 3000);
-  console.log('Server started on port 3000');
+  
   Logger.log('User microservice running');
 }
 bootstrap();

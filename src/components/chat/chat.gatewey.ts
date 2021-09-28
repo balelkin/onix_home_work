@@ -3,8 +3,6 @@ import {
   WebSocketGateway,
   OnGatewayInit,
   WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { ObjectId } from 'mongodb';
 import { Logger } from '@nestjs/common';
