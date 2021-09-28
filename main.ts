@@ -13,12 +13,15 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '../src/public', 'views'));
   app.setViewEngine('hbs');
 
+  // check more info about cors
   app.enableCors();
   app.use(cookieParser());
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.listen(process.env.PORT || 3000);
+
+  // use logger (no console)
   console.log('Server started on port 3000');
   Logger.log('User microservice running');
 }
