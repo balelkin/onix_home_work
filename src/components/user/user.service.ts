@@ -31,7 +31,7 @@ export class UserService {
       const userFromDB = await this.getUserByEmail(user.email);
 
       if (!userFromDB) {
-        var createdUser = new this.userRepository(
+        const createdUser = new this.userRepository(
           _.assignIn(
             user,
             { googleToken: user.accessToken },

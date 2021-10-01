@@ -61,14 +61,17 @@ export class ChatGateway implements OnGatewayInit {
     const tokenPayload = await this.authService.getTokenPayload(
       data.accessToken,
     );
+
     await this.roomService.joinUserToRoom(
       new ObjectId(data.roomId),
       tokenPayload.uId,
     );
+
     client.join(data.roomId);
     const messages = await this.messageService.getAllMessagesByRoom(
       data.roomId,
     );
+
     this.wss.to(data.roomId).emit('addUser', {
       user: tokenPayload.uEmail,
       userId: tokenPayload.uId,
@@ -99,6 +102,7 @@ export class ChatGateway implements OnGatewayInit {
       roomId: new ObjectId(data.roomId),
       ownerId: (await user)._id,
     });
+
     this.wss.to(data.roomId).emit('serverToClient', {
       text: data.text,
       name: data.name,

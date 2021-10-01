@@ -5,7 +5,6 @@ import {
   UseGuards,
   Body,
   HttpCode,
-  Req,
   Redirect,
   Res,
   Render,
@@ -25,7 +24,7 @@ import { constants } from 'src/constants/jwt.constants';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ConfirmAccountDto } from './dto/confirmAccountDto';
-import { Request } from 'express';
+import { Response } from 'express';
 import { UserData } from './decorators/user.decorator';
 
 @Controller('auth')
@@ -107,20 +106,20 @@ export class AuthController {
   @Patch('/changePassword')
   @HttpCode(201)
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    console.log(changePasswordDto);
-
     return this.authService.changePassword(changePasswordDto);
   }
 
   @Get('/confirmEmail')
-  @Redirect('./login')
+  @Redirect('../login')
   async confirm(@Query(ValidationPipe) query: ConfirmAccountDto) {
-    await this.authService.confirm(query.token);
+    return this.authService.confirm(query.token);
   }
 
   @Get('/logout')
-  @Render('index')
-  async logout(@Req() req: Request) {
-    return this.authService.logout(req.cookies.refreshToken);
+  async logout(@Res() res: Response) {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    return res.redirect('/login');
   }
 }

@@ -107,25 +107,30 @@
     e.preventDefault();
     let msgText = document.getElementById('msgText').value;
     document.getElementById('msgText').value = '';
+    
     socket.emit('clientToServer', { text: msgText, accessToken: getAccessToken(), roomId: getChatRoomId(), name: getUserName()}, );
   }
   
   
   function getChatRoomId() {
+   
     let url = new URL(window.location.href);
+    
     return url.pathname.split('/')[2];
   }
 
   function getAccessToken() {
+  
     let separateCookies = document.cookie.split(';');
     let userPart = separateCookies.filter((i) => i.trim().slice(0, 11) === 'accessToken');
-   console.log(userPart)
+   
     return userPart[0].split('=')[1];
   }
 function getUserName(){
    let separateCookies =  document.cookie.trim().split(';');
    let userPart = separateCookies.find((i) => i.trim().substring(0, 4)==="name");
-    return userPart.split('=')[1];
+    
+    return decodeURI((userPart.split('=')[1])) ;
   }
 </script>
 </body>

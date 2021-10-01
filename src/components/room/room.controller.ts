@@ -8,6 +8,7 @@ import {
   Delete,
   Render,
   Redirect,
+  UseGuards,
 } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -35,10 +36,10 @@ export class RoomController {
   @Render('createRoom')
   @Redirect('/room')
   async createRoom(@UserData() user) {
-    const uId = await this.userServise.getById(user._id);
     return user;
   }
 
+  @UseGuards()
   @Get('/')
   @Render('rooms.hbs')
   async findAll() {
@@ -46,6 +47,7 @@ export class RoomController {
     return { title: 'chat', rooms };
   }
 
+  @UseGuards()
   @Get('/:id/chat')
   @Render('chat.hbs')
   async processChatRoom(@Param('id') id: string) {

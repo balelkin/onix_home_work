@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   Inject,
   forwardRef,
 } from '@nestjs/common';

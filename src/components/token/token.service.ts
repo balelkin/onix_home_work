@@ -17,8 +17,8 @@ export class TokenService {
     return this.tokenModel.deleteOne({ uId, token });
   }
 
-  async deleteAll(uId: string) {
-    return this.tokenModel.deleteMany({ uId });
+  async deleteAll(id: string) {
+    return this.tokenModel.deleteMany({ id });
   }
 
   async exist(uId: string, token: string) {

@@ -19,11 +19,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (status === 403 || status === 401) {
-      response.redirect([process.env.BASE_URL]);
+      response.render('forbidden-exeption', {
+        message: 'Unauthorized ',
+        status: status,
+      });
+    } else if (status === 400) {
+      return response.render('page-error', {
+        message: 'Not found',
+        status: status,
+      });
     } else if (exception.code === 11000) {
-      response.status(status).json({
-        statusCode: status,
-        message: 'This email is already exist',
+      return response.render('page-error', { status: status });
+    } else if (status === 404) {
+      return response.render('page-error', {
+        message: 'Not found',
+        status: status,
+      });
+    } else if (status === 500) {
+      return response.render('page-error', {
+        message: 'Internal Server Error, sorry, it`s me, not you.',
+        status: status,
       });
     } else {
       response.status(status).json({

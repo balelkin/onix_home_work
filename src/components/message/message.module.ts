@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RoomModule } from '../room/room.module';
 import { UserModule } from '../user/user.module';
 import { MessageController } from './message.controller';
 import { MessageService } from './message.service';

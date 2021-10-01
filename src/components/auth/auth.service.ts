@@ -162,15 +162,18 @@ export class AuthService {
       throw new NotFoundException({ message: 'User not found' });
     }
   }
-  async verifyToken(token: string): Promise<ITokenPayload> {
-    const tokenPayload = this.jwtService.verify(token);
-    const tokenExist = await this.tokenService.exist(tokenPayload.uId, token);
+  private async verifyToken(token): Promise<any> {
+    try {
+      const data = await this.jwtService.verify(token);
+      const tokenExists = await this.tokenService.exist(data._id, token);
 
-    if (tokenExist) {
-      return tokenPayload;
+      if (tokenExists) {
+        return data;
+      }
+      throw new UnauthorizedException();
+    } catch (error) {
+      throw new UnauthorizedException();
     }
-
-    throw new UnauthorizedException();
   }
 
   async signUser(user: IUser, withStatusCheck = true): Promise<string> {
@@ -201,12 +204,6 @@ export class AuthService {
 
   async saveToken(createUserTokenDto: CreateUserTokenDto) {
     return this.tokenService.create(createUserTokenDto);
-  }
-
-  async logout(token: string) {
-    const tokenPayload = await this.getTokenPayload(token);
-
-    return this.tokenService.deleteAll(tokenPayload.email);
   }
 
   async confirm(token: string): Promise<IUser> {
